@@ -23,7 +23,7 @@ M.diagnostics = function()
         local filename = vim.api.nvim_buf_get_name(bufnr)
         for _, item in pairs(items) do
             table.insert(locations, {
-                text = item.message,
+                text = '[' .. item.source .. '] ' .. item.message,
                 filename = filename,
                 lnum = item.range.start.line + 1,
                 col = item.range.start.character + 1,
