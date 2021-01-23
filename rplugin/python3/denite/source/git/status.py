@@ -62,8 +62,6 @@ class Kind(AsyncKind, File):
         self.default_action = 'open'
         self.persist_actions += ['commit', 'amend', 'add', 'reset']
         self.redraw_actions += ['commit', 'amend', 'add', 'reset']
-        self._previewed_target = {}
-        self._previewed_winid = 0
 
     def action_commit(self, context):
         message = self.vim.call('input', 'message : ')
@@ -98,3 +96,6 @@ class Kind(AsyncKind, File):
         action = self.select('add or reset ?', {'a': 'add', 'r': 'reset'}, 'a')
         files = [target['action__path'] for target in context['targets']]
         self.terminal('git %s -p %s' % (action, ' '.join(files)), context)
+
+    def action_preview(self, context):
+        self.preview(['git', '-P', 'diff', context['targets'][0]['action__path']], context)

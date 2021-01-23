@@ -81,8 +81,8 @@ class Kind(AsyncKind):
         if commit1 and commit2:
             self.terminal('git difftool %s..%s -- %s' % (commit2, commit1, file), context)
 
-    def action_show(self, context):
-        self.terminal('git show --stat %s' % context['targets'][0]['action__commit'], context)
+    def action_preview(self, context):
+        self.preview(['git', '-P', 'show', '--stat', context['targets'][0]['action__commit']], context)
 
     def action_blame(self, context):
         target = context['targets'][0]

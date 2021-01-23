@@ -57,6 +57,12 @@ class AsyncSource(BaseSource):
 
 
 class AsyncKind(Kind):
+    def __init__(self, vim):
+        super().__init__(vim)
+
+        self._previewed_winid = 0
+        self._previewed_target = {}
+
     def run(self, command, context):
         proc = Process(command, context, context['path'])
         while not proc.eof():
@@ -72,3 +78,36 @@ class AsyncKind(Kind):
     def select(self, prompt, options, default):
         ret = self.vim.call('input', '%s [%s] : ' % (prompt, '/'.join(options)))
         return options[ret] if ret in options else options[default]
+
+    def preview(self, command, context):
+        target = context['targets'][0]
+
+        if not self.vim.call('executable', 'bat'):
+            return
+
+        prev_id = self.vim.call('win_getid')
+
+        if self._previewed_winid:
+            self.vim.call('win_gotoid', self._previewed_winid)
+            if self.vim.call('win_getid') != prev_id:
+                self.vim.command('close!')
+            self.vim.call('win_gotoid', prev_id)
+            self._previewed_winid = 0
+
+            if self._previewed_target == target:
+                # Close the window only
+                return
+
+        self.vim.call('denite#helper#preview_file', context, '')
+        self.vim.call('termopen', command)
+
+        self._add_previewed_buffer(self.vim.call('bufnr', '%'))
+        self._previewed_winid = self.vim.call('win_getid')
+
+        self.vim.call('win_gotoid', prev_id)
+        self._previewed_target = target
+
+    def _add_previewed_buffer(self, bufnr):
+        previewed_buffers = self.vim.vars['denite#_previewed_buffers']
+        previewed_buffers[str(bufnr)] = 1
+        self.vim.vars['denite#_previewed_buffers'] = previewed_buffers
