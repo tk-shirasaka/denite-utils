@@ -38,7 +38,7 @@ class Kind(AsyncKind, File):
         self.persist_actions += ['rename', 'delete']
         self.redraw_actions += ['rename', 'delete']
         self._previewed_target = {}
-        self._previewed_buffers = {}
+        self._previewed_winid = 0
 
     def action_rename(self, context):
         for target in context['targets']:

@@ -63,7 +63,7 @@ class Kind(AsyncKind, File):
         self.persist_actions += ['commit', 'amend', 'add', 'reset']
         self.redraw_actions += ['commit', 'amend', 'add', 'reset']
         self._previewed_target = {}
-        self._previewed_buffers = {}
+        self._previewed_winid = 0
 
     def action_commit(self, context):
         message = self.vim.call('input', 'message : ')

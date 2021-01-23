@@ -36,6 +36,11 @@ class Kind(Directory):
         self.persist_actions += ['rename', 'delete']
         self.redraw_actions += ['rename', 'delete']
 
+    def action_cd(self, context):
+        super().action_cd(context)
+        context['sources_queue'].append([{'name': 'source', 'args': []}, ])
+        context['path'] = context['targets'][0]['action__path']
+
     def action_rename(self, context):
         target = context['targets'][0]
         alias = self.vim.call('input', 'Alias : ', target['word'])
