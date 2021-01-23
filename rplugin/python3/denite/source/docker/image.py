@@ -52,8 +52,13 @@ class Kind(AsyncKind):
         for target in context['targets']:
             self.run(['docker', 'image', 'pull', target['action__image']], context)
 
-    def action_delete(self, context):
+    def delete(self, option, context):
         ids = [target['action__id'] for target in context['targets']]
-        args = ['docker', 'image', 'rm']
-        args += ['-f'] if self.select('Force delete?', {'n': False, 'y': True}, 'n') else []
+        args = ['docker', 'image', 'rm'] + option
         self.run(args + ids, context)
+
+    def action_delete(self, context):
+        self.delete([], context)
+
+    def action_delete_force(self, context):
+        self.delete(['-f'], context)

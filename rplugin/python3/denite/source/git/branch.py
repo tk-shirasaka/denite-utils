@@ -55,27 +55,42 @@ class Kind(AsyncKind):
     def action_new(self, context):
         self.run(['git', 'checkout', '-b', self.vim.call('input', 'New branch : ')], context)
 
-    def action_push(self, context):
-        option = self.select('Force push?', {'n': [], 'y': ['-f']}, 'n')
+    def push(self, option, context):
         remote = self.vim.call('input', 'Remote name : ')
         for target in context['targets']:
             self.run(['git', 'push', '-u', remote, target['action__branch']] + option, context)
 
-    def action_rename(self, context):
-        option = self.select('Force rename?', {'n': '-m', 'y': '-M'}, 'n')
+    def action_push(self, context):
+        self.push([], context)
+
+    def action_push_force(self, context):
+        self.push(['-f'], context)
+
+    def rename(self, option, context):
         for target in context['targets']:
             if target['action__remote']: continue
 
             branch = self.vim.call('input', 'New branch name : ', target['action__branch'])
             self.run(['git', 'branch', option, target['action__branch'], branch], context)
 
-    def action_delete(self, context):
-        option = self.select('Force delete?', {'n': '-d', 'y': '-D'}, 'n')
+    def action_rename(self, context):
+        self.rename('-m', context)
+
+    def action_rename_force(self, context):
+        self.rename('-M', context)
+
+    def delete(self, option, context):
         for target in context['targets']:
             if target['action__remote'] and option == '-D':
                 self.run(['git', 'push', target['action__remote'][:-1], ':%s' % target['action__branch']], context)
             elif not target['action__remote']:
                 self.run(['git', 'branch', option, target['action__branch']], context)
+
+    def action_delete(self, context):
+        self.delete('-d', context)
+
+    def action_delete_force(self, context):
+        self.delete('-D', context)
 
     def action_merge(self, context):
         target = context['targets'][0]

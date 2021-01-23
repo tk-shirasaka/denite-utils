@@ -68,10 +68,18 @@ class Kind(AsyncKind):
         if context['targets'][0]['action__commit']:
             self.run(['git', 'cherry-pick', context['targets'][0]['action__commit']], context)
 
-    def action_reset(self, context):
+    def reset(self, option, context):
         if context['targets'][0]['action__commit']:
-            option = self.select('Reset mode', {'m': '--mixed', 's': '--soft', 'h': '--hard'}, 'm')
             self.run(['git', 'reset', option, context['targets'][0]['action__commit']], context)
+
+    def action_reset(self, context):
+        self.reset('--mixed', context)
+
+    def action_reset_soft(self, context):
+        self.reset('--soft', context)
+
+    def action_reset_hard(self, context):
+        self.reset('--hard', context)
 
     def action_diff(self, context):
         file = context['targets'][0]['action__path']
@@ -82,7 +90,7 @@ class Kind(AsyncKind):
             self.terminal('git difftool %s..%s -- %s' % (commit2, commit1, file), context)
 
     def action_preview(self, context):
-        self.preview(['git', '-P', 'show', '--stat', context['targets'][0]['action__commit']], context)
+        self.preview(['git', '-P', 'show', '--stat', '--patch', context['targets'][0]['action__commit']], context)
 
     def action_blame(self, context):
         target = context['targets'][0]

@@ -87,15 +87,25 @@ class Kind(AsyncKind, File):
         self.run(['git', 'stash', 'push', '-u', '-m', message] + [target['action__path'] for target in context['targets']], context)
         context['sources_queue'].append([{'name': 'git/stash', 'args': []}])
 
-    def action_diff(self, context):
-        cached = self.select('cached?', {'y': '--cached', 'n': ''}, 'n')
+    def diff(self, option, context):
         files = [target['action__path'] for target in context['targets']]
-        self.terminal('git difftool %s %s' % (cached, ' '.join(files)), context)
+        self.terminal('git difftool %s %s' % (option, ' '.join(files)), context)
 
-    def action_patch(self, context):
-        action = self.select('add or reset ?', {'a': 'add', 'r': 'reset'}, 'a')
+    def action_diff(self, context):
+        self.diff('', context)
+
+    def action_diff_cached(self, context):
+        self.diff('--cached', context)
+
+    def patch(self, action, context):
         files = [target['action__path'] for target in context['targets']]
         self.terminal('git %s -p %s' % (action, ' '.join(files)), context)
+
+    def action_patch(self, context):
+        self.patch('add', context)
+
+    def action_patch_reset(self, context):
+        self.patch('reset', context)
 
     def action_preview(self, context):
         self.preview(['git', '-P', 'diff', context['targets'][0]['action__path']], context)

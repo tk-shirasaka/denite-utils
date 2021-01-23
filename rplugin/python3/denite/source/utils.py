@@ -75,10 +75,6 @@ class AsyncKind(Kind):
         self.vim.command('tabedit term://%s//0:%s' % (context['path'], command))
         self.vim.command('startinsert | autocmd BufEnter <buffer> startinsert | autocmd BufLeave <buffer> stopinsert')
 
-    def select(self, prompt, options, default):
-        ret = self.vim.call('input', '%s [%s] : ' % (prompt, '/'.join(options)))
-        return options[ret] if ret in options else options[default]
-
     def preview(self, command, context):
         target = context['targets'][0]
 
