@@ -90,7 +90,7 @@ class Kind(AsyncKind):
             self.terminal('git difftool %s..%s -- %s' % (commit2, commit1, file), context)
 
     def action_preview(self, context):
-        self.preview(['git', '-P', 'show', '--stat', '--patch', context['targets'][0]['action__commit']], context)
+        self.preview(['git', '-P', 'show', '--stat', '--patch', '--word-diff', context['targets'][0]['action__commit']], context)
 
     def action_blame(self, context):
         target = context['targets'][0]
