@@ -34,6 +34,12 @@ M.diagnostics = function()
     return locations
 end
 
+M.definition = function()
+    local params = util.make_position_params()
+
+    return request_lsp('textDocument/definition', params, util.locations_to_items)
+end
+
 M.references = function()
     local params = util.make_position_params()
     params.context = { includeDeclaration = true }
