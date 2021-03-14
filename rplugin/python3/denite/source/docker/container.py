@@ -66,3 +66,6 @@ class Kind(AsyncKind):
     def action_delete(self, context):
         ids = [target['action__id'] for target in context['targets']]
         self.run(['docker', 'container', 'rm'] + ids, context)
+
+    def action_preview(self, context):
+        self.preview_terminal(context, ['docker', 'inspect', context['targets'][0]['action__id']], 'preview')

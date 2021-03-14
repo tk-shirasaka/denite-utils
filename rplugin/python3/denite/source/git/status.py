@@ -108,4 +108,4 @@ class Kind(AsyncKind, File):
         self.patch('reset', context)
 
     def action_preview(self, context):
-        self.preview(['git', '-P', 'diff', '--word-diff', context['targets'][0]['action__path']], context)
+        self.preview_terminal(context, ['git', '-P', 'diff', '--word-diff', context['targets'][0]['action__path']], 'preview')

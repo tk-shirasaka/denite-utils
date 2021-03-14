@@ -102,4 +102,10 @@ class Kind(AsyncKind):
 
     def action_log(self, context):
         target = context['targets'][0]
-        context['sources_queue'].append([{'name': 'git/log', 'args': ['%s%s' % (target['action__remote'], target['action__branch'])]}])
+        branch = '%s%s' % (target['action__remote'], target['action__branch'])
+        context['sources_queue'].append([{'name': 'git/log', 'args': [branch]}])
+
+    def action_preview(self, context):
+        target = context['targets'][0]
+        branch = '%s%s' % (target['action__remote'], target['action__branch'])
+        self.preview_terminal(context, ['git', 'log', '--oneline', '--graph', branch], 'preview')

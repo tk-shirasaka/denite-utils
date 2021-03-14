@@ -28,11 +28,6 @@ class Source(AsyncSource):
         }
         self.duplicatable = True
 
-    def build_command(self, context):
-        if not len(context['args']) and self.vim.current.buffer.name:
-            context['args'] = ['--follow', self.vim.current.buffer.name]
-        return super().build_command(context)
-
     def build_candidate(self, line, context):
         match = re.search(r'([0-9A-Za-z]{6,13})\s-\s', line)
 
@@ -90,7 +85,10 @@ class Kind(AsyncKind):
             self.terminal('git difftool %s..%s -- %s' % (commit2, commit1, file), context)
 
     def action_preview(self, context):
-        self.preview(['git', '-P', 'show', '--stat', '--patch', '--word-diff', context['targets'][0]['action__commit']], context)
+        commit = context['targets'][0]['action__commit']
+        if commit:
+            command = ['git', '-P', 'show', '--stat', '--patch', '--word-diff', commit]
+            self.preview_terminal(context, command, 'preview')
 
     def action_blame(self, context):
         target = context['targets'][0]

@@ -51,4 +51,4 @@ class Kind(AsyncKind):
         self.terminal('git difftool %s' % context['targets'][0]['action__rev'], context)
 
     def action_preview(self, context):
-        self.preview(['git', '-P', 'diff', context['targets'][0]['action__rev']], context)
+        self.preview_terminal(context, ['git', '-P', 'diff', context['targets'][0]['action__rev']], 'preview')

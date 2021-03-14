@@ -37,8 +37,6 @@ class Kind(AsyncKind, File):
         self.default_action = 'open'
         self.persist_actions += ['rename', 'delete']
         self.redraw_actions += ['rename', 'delete']
-        self._previewed_target = {}
-        self._previewed_winid = 0
 
     def action_rename(self, context):
         for target in context['targets']:
@@ -47,3 +45,7 @@ class Kind(AsyncKind, File):
 
     def action_delete(self, context):
         self.run(['git', 'rm'] + [target['action__path'] for target in context['targets']], context)
+
+    def action_log(self, context):
+        target = context['targets'][0]
+        context['sources_queue'].append([{'name': 'git/log', 'args': ['--follow', target['action__path']]}])
